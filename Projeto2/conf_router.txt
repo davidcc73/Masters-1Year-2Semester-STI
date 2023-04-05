@@ -1,3 +1,8 @@
+##VER COM O PROF QUAL GAMA DE PORTS É OK PARA O MODO PASSIVO DO FTP
+#a tranferecia das listas funciona, mas nao consegui testar a tranferencia/alteracao para o server, as vindas dele funcionam, porque da erro de privilegios no lado do server)
+#no ativo o download para o cliente tb n da
+
+
 
 clear
 sudo systemctl stop firewalld 
@@ -32,9 +37,9 @@ iptables -A INPUT 			-p tcp -s 50.40.30.1 	-d 50.40.30.254  --dport 22 -j ACCEPT
 
 
 
-############################################################################################################################################################################################################################
+###############################################################################################################################################################################################################
 
-####PEDIDOS PRIVADA -> PUBLICA
+####PEDIDOS PRIVADA -> PUBLICA  (NAT)
 ####DNS PORT(53)##############################################################################################################
 iptables -A FORWARD 			-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 53 -j ACCEPT 
 iptables -A FORWARD 			-p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 --sport 53 -j ACCEPT    						
@@ -56,26 +61,28 @@ iptables -A FORWARD 			-p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 --sport 22 -j AC
 iptables -t nat -A POSTROUTING 	-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 22 -j SNAT --to-source 172.16.1.254
 
 
+###############################################################################################################################################################################################################
+
+#a tranferecia das listas funciona, mas nao consegui testar a tranferencia/alteracao para o server, as vindas dele funcionam, porque da erro de privilegios no lado do server)
+#no ativo o download para o cliente tb n da
+
+####FTP ATIVO (the server assigns a port and the IP address will be the same as the FTP client making the request)###############################################################################################
+#premitir que um pedido de FTP seja enviado e respondido
+iptables -A FORWARD 			-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 21 	-j ACCEPT
+#premitir que o server use o seu port padrão de tranferencia de data em FTP
+iptables -A FORWARD 			-p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 --sport 20 	-j ACCEPT
+iptables -t nat -A POSTROUTING 	-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 20:21 	-j SNAT --to-source 172.16.1.254
 
 
 
-
-#AINDA FALTA O FTP E COMO O TESTAR NOS 2 MODOS
-####FTP ATIVO (the server assigns a port and the IP address will be the same as the FTP client making the request)##############################################################################################################
-####FTP PASSIVO (the FTP server waits for the FTP client to send it a port and IP address to connect to)##############################################################################################################
-
-
-
-####FTP ACTIVE MODE PORT (21)######################################################################################################
-#Allow outbound connections to FTP server on port 21 for active mode FTP
-iptables -A FORWARD -p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 21 -j ACCEPT
-iptables -A FORWARD -p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 --sport 21 -j ACCEPT
-#Allow outbound connections to FTP server for data transfer in active mode
-iptables -A FORWARD -p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --sport 1024:65535 --tcp-flags SYN SYN -j ACCEPT
-iptables -A FORWARD -p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 --dport 1024:65535 --tcp-flags SYN,ACK SYN,ACK -j ACCEPT
-
-####FTP PASSIVE MODE PORT#####################################################################################################
-#Allow inbound connections to FTP server on a range of ports for data transfer in passive mode
-iptables -A FORWARD -p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 1024:65535 --tcp-flags SYN SYN -j ACCEPT
-iptables -A FORWARD -p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 --sport 1024:65535 --tcp-flags SYN,ACK SYN,ACK -j ACCEPT
+####FTP PASSIVE MODE#####################################################################################################
+#premitir que um pedido de FTP seja enviado e respondido
+iptables -A FORWARD 			-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 21 -j ACCEPT
+iptables -A FORWARD 			-p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 --sport 21 -j ACCEPT
+#premitir que o port escolhido pelo server para trans data, seja usado (ao inves do padrao 20)
+iptables -A FORWARD 			-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 1024:65535 -j ACCEPT
+iptables -A FORWARD 			-p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 --sport 1024:65535 -j ACCEPT
+#alterar os ip entre redes antes de criar a ligacao e apos estar estabelecida
+iptables -t nat -A POSTROUTING  -p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 21 		-j SNAT --to-source 172.16.1.254
+iptables -t nat -A POSTROUTING  -p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 1024:65535 -j SNAT --to-source 172.16.1.254
 
