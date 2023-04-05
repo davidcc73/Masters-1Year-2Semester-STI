@@ -1,0 +1,81 @@
+iptables -L						listar todas as iptables do sistema
+
+iptables -L -v 					lista a estatistica de packages apanhadas por cada regra
+
+/etc/services					tem os ports standard do sistema
+
+-A adicionar
+-D e repetir a regra apaga-a
+-I insert regra numa posição específica
+
+REJECT devolve um aviso à origem
+
+POLICY define o que é feito às packages quando não se encaixa em nenhuma das regras
+
+
+ex2: 
+
+iptables -A INPUT -s 127.0.0.1 -p icmp --icmp-type echo-request -j DROP      
+
+ex3: A ORDEM IMPORTA!
+
+iptables -A INPUT -s 10.1.0.1 -p tcp --dport ssh -j ACCEPT   //liga tcp com destino ao port 22 (SSH) sao aceites  (no lugar do IP estava antes student.dei.uc.pt, o prof trocou por estar sem net na VM)
+iptables -A INPUT -p tcp --dport pop3 -j ACCEPT   
+iptables -A INPUT -p tcp --dport imap -j ACCEPT   
+iptables -A INPUT -p tcp --syn -j DROP       //drop all else que queira uma nova ligacoa como ultima regra sem interferir com as ligaçoes ja em pratica
+
+
+ex4:
+
+iptables -A OUTPUT -d 10.1.0.1 -p tcp --dport http -j ACCEPT
+iptables -A OUTPUT -d 10.1.0.1 -p tcp --dport https -j ACCEPT
+iptables -A OUTPUT -p tcp --dport ssh -j ACCEPT
+iptables -A OUTPUT -p tcp --syn -j REJECT
+
+
+ex6:  os pacotes da ligcaçao ja estabelecida
+
+iptables -P INPUT DROP
+iptables -P OUTPUT DROP
+
+a)
+iptables -A INPUT -p tcp --dport ssh -j ACCEPT   		//permitimos conexoes nos 2 sentidos
+iptables -A OUTPUT -p tcp --sport ssh -j ACCEPT
+
+b) usam http
+iptables -A OUTPUT -p tcp --sport ssh -j ACCEPT
+iptables -A OUTPUT -p tcp --sport http -j ACCEPT
+iptables -A OUTPUT -p tcp --sport https -j ACCEPT
+
+c)o DNS usa UDP e TCP, mas a inicial tende a ser UDP
+iptables -A INPUT -s dns.dei.uc.pt -p udp --sport domian -j ACCEPT
+iptables -A INPUT -s dns2.dei.uc.pt -p udp --sport domain -j ACCEPT
+
+iptables -A OUTPUT -d dns.dei.uc.pt -p udp --dport domian -j ACCEPT
+iptables -A OUTPUT -d dns2.dei.uc.pt -p udp --dport domain -j ACCEPT
+
+d)
+iptables -A INPUT -s student.dei.uc.pt -p icmp --icmp-type echo-request -j ACCEPT
+iptables -A OUTPUT -d student.dei.uc.pt -p icmp --icmp-type echo-reply -j ACCEPT      
+      
+
+e) Nao dizindo qual é a o port, todos os protocolos sao aceites quando é comigo mesmo neste caso
+iptables -A INPUT -s 127.0.0.1 -j ACCEPT 
+iptables -A OUTPUT -d 127.0.0.1 -j ACCEPT 
+
+OU EQUIVALENTE, PODEMOS ESPECIFICAR O CENÁRIO DE LOOP do host com sigo mesmo, dá no mesmo só é mais específico devido ao -i (interface) lo (a interface que tem 127.0.0.1/8)
+iptables -A INPUT -i lo -s 127.0.0.1 -j ACCEPT 
+iptables -A OUTPUT -i lo -d 127.0.0.1 -j ACCEPT 
+
+
+
+ex7:  
+
+Isto sao RUN-TIME configurations, sao apagadas com a cada reboot
+Para preservar temos de as salvar
+
+iptabçes-save > my_fw_backup
+iptabçes-restore < my_fw_backup
+
+/etc/sysconfig/iptables   					//tem as configuraçao permantente da fw
+iptabçes-save > /etc/sysconfig/iptables		//salvar permanentemente

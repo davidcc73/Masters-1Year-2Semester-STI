@@ -1,0 +1,82 @@
+encaminhar o que vem do tun para o enp0s8 e vice-versa, as regras de nat sao nos 2 sentidos
+
+
+OG 		router 		(para a publica)			172.16.1.254/24 dev enp0s8
+					(para a privada)			10.254.0.254/24 dev enp0s9
+
+CLone-1 			(para a publica-servidor)	172.16.1.1/24 dev enp0s8		
+CLone-2 			(para a privada-cliente)	10.254.0.1/24 dev enp0s8			
+
+
+ex1:	DNS             n sei se esta bem
+
+clear
+iptables -F
+iptables -t nat -F POSTROUTING
+iptables -t nat -F PREROUTING
+sudo systemctl stop firewalld  
+sysctl -w net.ipv4.ip_forward=1
+iptables -A FORWARD -s 10.254.0.0/24 -d 172.16.1.0/24 -p udp --dport domain -j ACCEPT
+iptables -A FORWARD -d 10.254.0.0/24 -s 172.16.1.0/24 -p udp --sport domain -j ACCEPT
+iptables -A FORWARD -s 10.254.0.0/24 -d 172.16.1.0/24 -p udp --dport 123 -j ACCEPT
+iptables -L
+iptables -t nat -L
+
+
+
+
+
+
+ex2 DO SNAT:											nat trata dos 2 sentidos
+(para a privada-cliente) nc 172.16.1.1 80	
+(para a publica-servidor) nc -l 80
+
+
+clear
+sudo systemctl stop firewalld 
+iptables -F
+iptables -F INPUT
+iptables -F OUTPUT
+iptables -F FORWARD
+iptables -t nat -F POSTROUTING
+iptables -t nat -F PREROUTING
+ip addr add 172.16.1.254/24 dev enp0s8
+ip addr add 10.254.0.254/24 dev enp0s9
+route add -net 10.254.0.0/24 gw 10.254.0.254	
+route add -net 172.16.1.0/24 gw 172.16.1.254
+sysctl -w net.ipv4.ip_forward=1
+iptables -P INPUT ACCEPT
+iptables -P OUTPUT ACCEPT
+iptables -P FORWARD DROP
+
+iptables -A FORWARD 			-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport http -j ACCEPT 
+iptables -A FORWARD 			-p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 --sport http -j ACCEPT    						
+iptables -t nat -A POSTROUTING 	-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport http -j SNAT --to-source 172.16.1.254
+
+
+
+
+precisei de usar DNAT, mas funcao do DNAT n era só quando se iniciava a conexao na privada? o router n trocava o destination IP dos ACK para cliente, trocava para o server
+como era suposto fazer só com SNAT?
+porque ele funciona mesmo assim e bloqueia quando conecao parte do server?
+
+
+
+2 FOWRWAD PARA CADA 1 SNAT
+SNAT É QUANDO PARTE DA PRIVADA
+DSNAT É QUANDO A LIG PARTE DE FORA
+
+
+
+
+iptables -t nat -L
+
+
+
+
+
+
+
+ex3 DO DNAT:											nat trata dos 2 sentidos
+iptables -t nat -A PRETOUTING -s 172.16.1.0/24 -d 172.16.1.254 -p tcp --dport ssh -j DNAT --to-destination 10.254.0.1
+iptables -A FORWARD -d 172.16.1.0/24 -s 10.254.0.1 -p tcp --sport ssh -j ACCEPT

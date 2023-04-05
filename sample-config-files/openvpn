@@ -1,0 +1,2 @@
+auth	reuired		pam_unix.so	shadow	nodelay
+account	required	

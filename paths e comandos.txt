@@ -1,0 +1,38 @@
+/usr/share/doc/openvpn-2.4.12/sample/sample-config-files    server/client.conf  do open vpn
+
+/etc/pam.d/						openvpn
+
+
+/etc/pki/CA/
+
+/etc/							hosts
+
+yum install wireshark-gnome
+/usr/sbin/ 						wireshark
+
+/etc/httpd/conf.d/				apache
+
+
+google-authenticator -t -d -u -s /etc/openvpn/pessoa1-secret -e 5
+KEY 2FA:szcWMcXzAdNVJ4vLNTbvZvKzeQPeIFjW
+
+
+yum install httpd				instalar apache
+
+
+yum install epel-release		instalar openvpn
+yum install openvpn				
+
+
+sudo systemctl stop firewalld  
+sysctl -w net.ipv4.ip_forward=1 
+
+------------------------------------------------------------------------------
+
+fuser -k 80/udp
+ip a 
+sysctl -w net.ipv4.ip_forward=1
+iptables -L
+iptables -t nat -L
+
+iptables -v -L -n				ver estatisitca

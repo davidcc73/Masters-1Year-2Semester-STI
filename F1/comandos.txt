@@ -1,0 +1,18 @@
+gpd --gen-key
+
+
+1)
+
+passphrase, é o que protege o acesso ao file com as PrivK
+
+gpg --list-secret-keys
+
+gpg --edit-key jgranjal
+
+gpg -sea  para assinar com a nossa e encriptar com a de outra pessoa  em ASCII O OUTTPUT
+
+
+gpg e paste   basta para testar a encriptacao, assinatura e desincriptar
+
+gpg --export -a   (so as pub)
+gpg --export-secret.keys -a   (so as privadas)

@@ -1,0 +1,49 @@
+in the client (that has IP: 10.254.0.1) I used: nc 172.16.1.254 80
+routes:
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.254.0.0      0.0.0.0         255.255.255.0   U     0      0        0 enp0s8
+172.16.1.0      10.254.0.254    255.255.255.0   UG    0      0        0 enp0s8
+
+
+
+in the server (that has IP: 172.16.1.1) I used :  nc -l 80
+routes:
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.254.0.0      172.16.1.254    255.255.255.0   UG    0      0        0 enp0s8
+172.16.1.0      0.0.0.0         255.255.255.0   U     0      0        0 enp0s8
+
+
+
+
+I configured the route using: 
+
+clear
+sudo systemctl stop firewalld 
+iptables -F
+iptables -F INPUT
+iptables -F OUTPUT
+iptables -F FORWARD
+iptables -t nat -F POSTROUTING
+iptables -t nat -F PREROUTING
+ip addr add 172.16.1.254/24 dev enp0s8
+ip addr add 10.254.0.254/24 dev enp0s9
+route add -net 10.254.0.0/24 gw 10.254.0.254	
+route add -net 172.16.1.0/24 gw 172.16.1.254
+sysctl -w net.ipv4.ip_forward=1
+iptables -P INPUT ACCEPT
+iptables -P OUTPUT ACCEPT
+iptables -P FORWARD ACCEPT
+
+iptables -A FORWARD 			-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport http -j ACCEPT 
+iptables -t nat -A POSTROUTING 	-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport http -j SNAT --to-source 172.16.1.254
+
+
+
+
+
+
+
+
+
+the server is listening before the client is started.
+the SYN package is being DROP by router, why is the client's TCP connection being refused at the router? the objective is to allow HTTP connections by the use of SNAT in the router

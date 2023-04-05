@@ -1,0 +1,62 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 5 (0x5)
+    Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C=PT, ST=Coimbra, L=Coimbra, O=UC, OU=DEI, CN=CA
+        Validity
+            Not Before: Feb 28 17:03:26 2023 GMT
+            Not After : Feb 28 17:03:26 2024 GMT
+        Subject: C=PT, ST=Coimbra, O=UC, OU=DEI, CN=vpn
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (1024 bit)
+                Modulus:
+                    00:e4:f6:ea:af:90:42:d5:e5:df:9a:c0:55:b6:ed:
+                    6e:aa:cb:fb:0a:1c:11:cb:ec:72:20:2c:06:d2:32:
+                    af:58:d5:38:6a:99:82:b0:07:40:62:54:71:48:a3:
+                    a9:ce:61:eb:85:18:a2:83:7f:b7:e0:d8:ad:6f:25:
+                    80:99:ed:89:e6:90:aa:af:89:1b:45:dd:40:70:ee:
+                    58:8f:48:2b:d4:7b:bb:ea:b4:a8:be:09:88:ba:a7:
+                    3b:94:2b:9a:17:f4:a5:62:57:57:09:07:3d:2f:c0:
+                    e1:51:f5:3b:95:30:9e:d1:dd:13:20:ab:66:8f:89:
+                    47:47:05:db:cd:5c:86:48:2b
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            Netscape Comment: 
+                OpenSSL Generated Certificate
+            X509v3 Subject Key Identifier: 
+                19:72:27:8C:5E:7E:6D:20:65:6F:3B:17:4D:46:42:83:38:00:B6:62
+            X509v3 Authority Key Identifier: 
+                DirName:/C=PT/ST=Coimbra/L=Coimbra/O=UC/OU=DEI/CN=CA
+                serial:D8:3E:5A:BB:F9:0E:12:A2
+
+    Signature Algorithm: sha256WithRSAEncryption
+         84:d1:a5:61:0c:ea:5a:4f:d0:99:0f:cc:89:28:01:d4:2d:5e:
+         9b:6d:e5:c2:3d:2a:1e:6f:3a:f9:e3:e9:4d:17:3e:5e:b2:2e:
+         6d:28:db:88:c3:2f:a1:7a:36:a1:05:44:1f:5b:6d:7b:98:9e:
+         49:ed:38:a1:89:eb:10:39:5f:4d:4c:8f:f9:a1:a2:f2:72:e6:
+         b0:79:30:24:5a:8e:8a:a1:76:ec:cb:3e:25:0d:ef:2e:c2:0c:
+         36:1f:4e:89:0e:35:2a:14:6d:97:a2:51:a1:23:73:1f:ca:39:
+         00:08:5b:ec:7c:0b:91:b5:62:20:79:a0:20:94:bf:79:24:d5:
+         eb:5a
+-----BEGIN CERTIFICATE-----
+MIIC6DCCAlGgAwIBAgIBBTANBgkqhkiG9w0BAQsFADBZMQswCQYDVQQGEwJQVDEQ
+MA4GA1UECAwHQ29pbWJyYTEQMA4GA1UEBwwHQ29pbWJyYTELMAkGA1UECgwCVUMx
+DDAKBgNVBAsMA0RFSTELMAkGA1UEAwwCQ0EwHhcNMjMwMjI4MTcwMzI2WhcNMjQw
+MjI4MTcwMzI2WjBIMQswCQYDVQQGEwJQVDEQMA4GA1UECAwHQ29pbWJyYTELMAkG
+A1UECgwCVUMxDDAKBgNVBAsMA0RFSTEMMAoGA1UEAwwDdnBuMIGfMA0GCSqGSIb3
+DQEBAQUAA4GNADCBiQKBgQDk9uqvkELV5d+awFW27W6qy/sKHBHL7HIgLAbSMq9Y
+1ThqmYKwB0BiVHFIo6nOYeuFGKKDf7fg2K1vJYCZ7YnmkKqviRtF3UBw7liPSCvU
+e7vqtKi+CYi6pzuUK5oX9KViV1cJBz0vwOFR9TuVMJ7R3RMgq2aPiUdHBdvNXIZI
+KwIDAQABo4HQMIHNMAkGA1UdEwQCMAAwLAYJYIZIAYb4QgENBB8WHU9wZW5TU0wg
+R2VuZXJhdGVkIENlcnRpZmljYXRlMB0GA1UdDgQWBBQZcieMXn5tIGVvOxdNRkKD
+OAC2YjBzBgNVHSMEbDBqoV2kWzBZMQswCQYDVQQGEwJQVDEQMA4GA1UECAwHQ29p
+bWJyYTEQMA4GA1UEBwwHQ29pbWJyYTELMAkGA1UECgwCVUMxDDAKBgNVBAsMA0RF
+STELMAkGA1UEAwwCQ0GCCQDYPlq7+Q4SojANBgkqhkiG9w0BAQsFAAOBgQCE0aVh
+DOpaT9CZD8yJKAHULV6bbeXCPSoebzr54+lNFz5esi5tKNuIwy+hejahBUQfW217
+mJ5J7TihiesQOV9NTI/5oaLycuaweTAkWo6KoXbsyz4lDe8uwgw2H06JDjUqFG2X
+olGhI3MfyjkACFvsfAuRtWIgeaAglL95JNXrWg==
+-----END CERTIFICATE-----

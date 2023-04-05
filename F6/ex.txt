@@ -1,0 +1,30 @@
+inicializar:  usr/sbin/snort -v
+				podemos usar confi do site do snort como base
+ex2:
+/usr/sbin/snort -vd -i enp0s9
+
+
+ex3:
+
+snort -vde -K ascii -i enp0s9 -l /home/dcaetano/STI/snort_log/
+
+
+ex4:
+
+snort -vd -K ascii -i enp0s9 -l /home/dcaetano/STI/snort_log/
+
+
+ex5:
+escrever em binario
+snort -b -i enp0s9 -l /home/dcaetano/STI/snort_log/
+snort -vd -r /home/dcaetano/STI/snort_log/10.254.0.254/snort.log
+
+
+
+ex6:			carregar com as regras
+/usr/sbin/snort -vde -i enp0s9 -c ex6.cfg -l /home/dcaetano/STI/snort_log/
+
+ex7:
+
+
+/usr/sbin/snort -vde -i enp0s9 -c /home/dcaetano/STI/Snort/snort.cfg -l /home/dcaetano/STI/snort_log/

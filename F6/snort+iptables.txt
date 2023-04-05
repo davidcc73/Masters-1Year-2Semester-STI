@@ -1,0 +1,4 @@
+iptables -A FORWARD -j NFQUEUE --queue-num 0			//a regra que encaminha da iptables par ao snort
+
+	
+snort -Q -daq nfq --daq-var queue=0 -c rule.conf -v -l /pathto/				//assim o snort rece os pacotes da iptable

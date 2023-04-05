@@ -1,0 +1,16 @@
+.key é a privada
+.csr é o request (temporario para criar o certificado final)
+.crt é o certificado final     será o nosso servidor
+
+cert.crt é o nosso certificado e request assinados com a nossa pela nossa PK prvando que somos nos e como nos contactar para nos assinarem
+
+
+APACHE:
+.key priv key
+.csr  request
+.crt	certificado final
+
+
+
+.p12 formatos alternativos
+.der
