@@ -15,7 +15,7 @@ iptables -A FORWARD -p icmp --icmp-type echo-reply -d 172.16.1.0/24 -s 10.254.0.
 DMZ	50.40.30.0/24
 
 vpn-gw 		50.40.30.1
-
+dns 		50.40.30.2
 
 
 
