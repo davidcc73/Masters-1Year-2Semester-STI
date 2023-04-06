@@ -39,6 +39,8 @@ iptables -A INPUT 			-p tcp -s 50.40.30.1 	-d 50.40.30.254  --dport 22 -j ACCEPT
 
 ###############################################################################################################################################################################################################
 
+
+
 ####PEDIDOS PRIVADA -> PUBLICA  (NAT)
 ####DNS PORT(53)##############################################################################################################
 iptables -A FORWARD 			-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 53 -j ACCEPT 
@@ -60,20 +62,12 @@ iptables -A FORWARD 			-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 22 -j AC
 iptables -A FORWARD 			-p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 --sport 22 -j ACCEPT    						
 iptables -t nat -A POSTROUTING 	-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 22 -j SNAT --to-source 172.16.1.254
 
-
-###############################################################################################################################################################################################################
-
-#a tranferecia das listas funciona, mas nao consegui testar a tranferencia/alteracao para o server, as vindas dele funcionam, porque da erro de privilegios no lado do server)
-#no ativo o download para o cliente tb n da
-
 ####FTP ATIVO (the server assigns a port and the IP address will be the same as the FTP client making the request)###############################################################################################
 #premitir que um pedido de FTP seja enviado e respondido
 iptables -A FORWARD 			-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 21 	-j ACCEPT
 #premitir que o server use o seu port padrão de tranferencia de data em FTP
 iptables -A FORWARD 			-p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 --sport 20 	-j ACCEPT
 iptables -t nat -A POSTROUTING 	-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 20:21 	-j SNAT --to-source 172.16.1.254
-
-
 
 ####FTP PASSIVE MODE#####################################################################################################
 #premitir que um pedido de FTP seja enviado e respondido
@@ -86,3 +80,4 @@ iptables -A FORWARD 			-p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 --sport 1024:655
 iptables -t nat -A POSTROUTING  -p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 21 		-j SNAT --to-source 172.16.1.254
 iptables -t nat -A POSTROUTING  -p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 1024:65535 -j SNAT --to-source 172.16.1.254
 
+#NOTA:para se conseguir alterar algo no server temos de ir a esse diretorio dar permissoes de escrita a anonimos(se fizermos login com um claro, USEI O /usr/games/)

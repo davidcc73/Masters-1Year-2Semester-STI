@@ -44,3 +44,19 @@ ip addr add 10.254.0.1/24 dev enp0s8
 route add -net 172.16.1.0/24 gw 10.254.0.254
 
 
+
+
+/etc/vsftpd/vsftpd.conf
+#Configuracoes para o server do vsftps:   tb temos de dar permissos a anonimos do diretorio que queremos editar no server para lhe podermos mexer
+anonymous_enable=YES
+local_enable=NO
+write_enable=YES
+anon_upload_enable=YES
+anon_mkdir_write_enable=YES
+anon_other_write_enable=YES
+anon_root=/
+
+#Enables passive mode.
+pasv_enable=YES
+pasv_min_port=1024.
+pasv_max_port=65535
