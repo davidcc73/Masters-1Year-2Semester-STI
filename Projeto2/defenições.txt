@@ -12,10 +12,24 @@ iptables -A FORWARD -p icmp --icmp-type echo-request -d 10.254.0.0/24 -s 172.16.
 iptables -A FORWARD -p icmp --icmp-type echo-reply -d 172.16.1.0/24 -s 10.254.0.0/24 -j ACCEPT
 ----------------------para testar os pings----------------------------------------
 
-DMZ	50.40.30.0/24
+DMZ		50.40.30.0/24
 
-vpn-gw 		50.40.30.1
-dns 		50.40.30.2
+vpn-gw 				50.40.30.1
+dns 				50.40.30.2
+
+
+Privada	10.254.0.0/24
+
+cliente				10.254.0.1
+datastore server	10.254.0.2
+ftp					10.254.0.3
+
+
+Publica	172.16.1.0/24
+
+cliente				172.16.1.1
+eden server			172.16.1.2
+dns2 server			172.16.1.3
 
 
 
