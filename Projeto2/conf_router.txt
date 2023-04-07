@@ -1,8 +1,3 @@
-##VER COM O PROF QUAL GAMA DE PORTS É OK PARA O MODO PASSIVO DO FTP
-#a tranferecia das listas funciona, mas nao consegui testar a tranferencia/alteracao para o server, as vindas dele funcionam, porque da erro de privilegios no lado do server)
-#no ativo o download para o cliente tb n da
-
-
 
 clear
 sudo systemctl stop firewalld 
@@ -23,6 +18,7 @@ sysctl -w net.ipv4.ip_forward=1
 iptables -P INPUT DROP							 
 iptables -P OUTPUT ACCEPT
 iptables -P FORWARD DROP
+iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT			#permitir pacotes de ligaçoes estabelecidas
 
 
 ####ROUTER -> PUBLICA ------ PRIVADA -> ROUTER ------ DMZ -> ROUTER
@@ -36,22 +32,27 @@ iptables -A INPUT 			-p tcp -s 10.254.0.0/24 -d 10.254.0.254  --dport 22 -j ACCE
 iptables -A INPUT 			-p tcp -s 50.40.30.1 	-d 50.40.30.254  --dport 22 -j ACCEPT 	#só para o vpn-gw da DMZ
 
 
-
 ###############################################################################################################################################################################################################
 
 ####PUBLICA -> PRIVADA  (DNAT)    IP destination é router!
-FTP connections (in passive and active modes) to the ftp server (Privada)
+####FTP ATIVO#################################################################################################################
+iptables -t nat -A PREROUTING 	-p tcp -s 172.16.1.0/24	-d 172.16.1.254 --dport 20:21 -j DNAT --to-destination 10.254.0.3
+iptables -A FORWARD  			-p tcp -s 172.16.1.0/24 -d 10.254.0.3 	--dport 20:21 -j ACCEPT
+iptables -A FORWARD  			-p tcp -d 172.16.1.0/24 -s 10.254.0.3 	--sport 20:21 -j ACCEPT
+####FTP PASSIVE MODE##########################################################################################################
+iptables -t nat -A PREROUTING 	-p tcp -s 172.16.1.0/24	-d 172.16.1.254 -m multiport --dports 21,1024:65535 -j DNAT --to-destination 10.254.0.3
+iptables -A FORWARD  			-p tcp -s 172.16.1.0/24 -d 10.254.0.3 	-m multiport --dports 21,1024:65535 -j ACCEPT
+iptables -A FORWARD  			-p tcp -d 172.16.1.0/24 -s 10.254.0.3 	-m multiport --sports 21,1024:65535 -j ACCEPT
 
-
-
-
-SSH connections to the datastore server (Privada), but only if originated at the eden or dns2 servers.
-
-
+####SSH PORT(22)##############################################################################################################
+SSH connections to the datastore server, Privada, but only if originated at the eden or dns2 servers.
+iptables -t nat -A PREROUTING 	-p tcp -s 172.16.1.2,172.16.1.3 	-d 172.16.1.254 --dport 22 -j DNAT --to-destination 10.254.0.2
+iptables -A FORWARD 			-p tcp -s 172.16.1.2,172.16.1.3 	-d 10.254.0.2 	--dport 22 -j ACCEPT 
+iptables -A FORWARD 			-p tcp -d 172.16.1.2,172.16.1.3 	-s 10.254.0.2 	--sport 22 -j ACCEPT    	
+					
+						
 
 ###############################################################################################################################################################################################################
-
-
 
 ####PRIVADA -> PUBLICA  (SNAT)		IP destination é a publica!
 ####DNS PORT(53)##############################################################################################################
@@ -74,22 +75,15 @@ iptables -A FORWARD 			-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 22 -j AC
 iptables -A FORWARD 			-p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 --sport 22 -j ACCEPT    						
 iptables -t nat -A POSTROUTING 	-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 22 -j SNAT --to-source 172.16.1.254
 
-####FTP ATIVO#################################################################################################################
-#premitir que um pedido de FTP seja enviado e respondido
-iptables -A FORWARD 			-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 21 	-j ACCEPT
-#premitir que o server use o seu port padrão de tranferencia de data em FTP
-iptables -A FORWARD 			-p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 --sport 20 	-j ACCEPT
-iptables -t nat -A POSTROUTING 	-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 20:21 	-j SNAT --to-source 172.16.1.254
 
+####FTP ATIVO#################################################################################################################
+iptables -A FORWARD  			-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 20:21 			-j ACCEPT
+iptables -A FORWARD  			-p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 --sport 20:21 			-j ACCEPT
+iptables -t nat -A POSTROUTING 	-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 20:21 			-j SNAT --to-source 172.16.1.254
 ####FTP PASSIVE MODE##########################################################################################################
 #premitir que um pedido de FTP seja enviado e respondido
-iptables -A FORWARD 			-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 21 -j ACCEPT
-iptables -A FORWARD 			-p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 --sport 21 -j ACCEPT
-#premitir que o port escolhido pelo server para trans data, seja usado (ao inves do padrao 20)
-iptables -A FORWARD 			-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 1024:65535 -j ACCEPT
-iptables -A FORWARD 			-p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 --sport 1024:65535 -j ACCEPT
-#alterar os ip entre redes antes de criar a ligacao e apos estar estabelecida
-iptables -t nat -A POSTROUTING  -p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 21 		-j SNAT --to-source 172.16.1.254
-iptables -t nat -A POSTROUTING  -p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 1024:65535 -j SNAT --to-source 172.16.1.254
+iptables -A FORWARD 			-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 -m multiport --dports 21,1024:65535 -j ACCEPT
+iptables -A FORWARD 			-p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 -m multiport --sports 21,1024:65535 -j ACCEPT
+iptables -t nat -A POSTROUTING 	-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 -m multiport --dports 21,1024:65535 -j SNAT --to-source 172.16.1.254
 
 #NOTA:para se conseguir alterar algo no server temos de ir a esse diretorio dar permissoes de escrita a anonimos(se fizermos login com um claro, USEI O /usr/games/)
