@@ -54,7 +54,7 @@ iptables -A FORWARD 			-p tcp -d 172.16.1.2,172.16.1.3 	-s 10.254.0.2 	--sport 2
 					
 						
 
-###########################################################################################################################################
+###############################################################################################################################
 
 ####PRIVADA -> PUBLICA  (SNAT)		IP destination é a publica!
 ####DNS PORT(53)##################################################################
@@ -75,13 +75,13 @@ iptables -t nat -A POSTROUTING 	-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport
 ####SSH PORT(22)##################################################################
 iptables -A FORWARD 			-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 22 -j NFQUEUE --queue-num 0  
 iptables -A FORWARD 			-p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 --sport 22 -j NFQUEUE --queue-num 0     						
-iptables -t nat -A POSTROUTING 	-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 22 -j SNAT --to-source 172.16.1.254
+iptables -t nat -A POSTROUTING  -p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 22 -j SNAT --to-source 172.16.1.254
 
 
 ####FTP ATIVO######################################################################
 iptables -A FORWARD  			-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 20:21 			-j NFQUEUE --queue-num 0 
 iptables -A FORWARD  			-p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 --sport 20:21 			-j NFQUEUE --queue-num 0 
-iptables -t nat -A POSTROUTING 	-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 20:21 			-j SNAT --to-source 172.16.1.254
+iptables -t nat -A POSTROUTING  -p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 20:21 			-j SNAT --to-source 172.16.1.254
 ####FTP PASSIVE MODE###############################################################
 #premitir que um pedido de FTP seja enviado e respondido
 iptables -A FORWARD 			-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 -m multiport --dports 21,1024:65535 -j NFQUEUE --queue-num 0 
@@ -89,6 +89,3 @@ iptables -A FORWARD 			-p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 -m multiport --s
 iptables -t nat -A POSTROUTING 	-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 -m multiport --dports 21,1024:65535 -j SNAT --to-source 172.16.1.254
 
 #NOTA:para se conseguir alterar algo no server temos de ir a esse diretorio dar permissoes de escrita a anonimos(se fizermos login com um claro, USEI O /usr/games/)
-
-
-
