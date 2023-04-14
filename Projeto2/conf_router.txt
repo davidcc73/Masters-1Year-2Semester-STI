@@ -2,23 +2,20 @@
 clear
 sudo systemctl stop firewalld 
 ip route flush all
+ip addr add 172.16.1.254/24 dev enp0s8
+ip addr add 10.254.0.254/24 dev enp0s9
+ip addr add 50.40.30.254/24 dev enp0s10		
 iptables -F
 iptables -F INPUT
 iptables -F OUTPUT
 iptables -F FORWARD
 iptables -t nat -F POSTROUTING
 iptables -t nat -F PREROUTING
-ip addr add 172.16.1.254/24 dev enp0s8
-ip addr add 10.254.0.254/24 dev enp0s9
-ip addr add 50.40.30.254/24 dev enp0s10			
-route add -net 10.254.0.0/24 gw 10.254.0.254	
-route add -net 172.16.1.0/24 gw 172.16.1.254
-route add -net 50.40.30.0/24 gw 50.40.30.254
 sysctl -w net.ipv4.ip_forward=1
+iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j NFQUEUE --queue-num 0 			#permitir pacotes de ligaçoes estabelecidas
 iptables -P INPUT DROP							 
 iptables -P OUTPUT ACCEPT
 iptables -P FORWARD DROP
-iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j NFQUEUE --queue-num 0 			#permitir pacotes de ligaçoes estabelecidas
 
 
 
@@ -26,27 +23,27 @@ iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j NFQUEUE --queue-num 
 ####ROUTER -> PUBLICA ------ PRIVADA -> ROUTER ------ DMZ -> ROUTER
 #permitir a entrada de pacotes para estabelecer e sincronicar ligaçoes (ACK e SYN)
 iptables -A INPUT -m state --state ESTABLISHED,RELATED -j NFQUEUE --queue-num 0 
-####DNS PORT(53)###################################################################
-iptables -A INPUT 			-p tcp -s 172.16.1.0/24 -d 172.16.1.254 --sport 53 -j NFQUEUE --queue-num 0  
+####DNS PORT(53)##############################################################################################################
+iptables -A INPUT 			-p tcp -s 172.16.1.0/24 -d 172.16.1.254 --sport 53 -j NFQUEUE --queue-num 0
 
-####SSH PORT(22)###################################################################
-iptables -A INPUT 			-p tcp -s 10.254.0.0/24 -d 10.254.0.254  --dport 22 -j NFQUEUE --queue-num 0  
+####SSH PORT(22)##############################################################################################################
+iptables -A INPUT 			-p tcp -s 10.254.0.0/24 -d 10.254.0.254  --dport 22 -j NFQUEUE --queue-num 0
 iptables -A INPUT 			-p tcp -s 50.40.30.1 	-d 50.40.30.254  --dport 22 -j NFQUEUE --queue-num 0  	#só para o vpn-gw da DMZ
 
 
-############################################################################################################################################
+###############################################################################################################################################################################################################
 
 ####PUBLICA -> PRIVADA  (DNAT)    IP destination é router!
-####FTP ATIVO######################################################################
-iptables -t nat -A PREROUTING 	-p tcp -s 172.16.1.0/24 -d 172.16.1.254 --dport 20:21 -j DNAT --to-destination 10.254.0.3
-iptables -A FORWARD  			-p tcp -s 172.16.1.0/24 -d 10.254.0.3 	--dport 20:21 -j NFQUEUE --queue-num 0 
-iptables -A FORWARD  			-p tcp -d 172.16.1.0/24 -s 10.254.0.3 	--sport 20:21 -j NFQUEUE --queue-num 0 
-####FTP PASSIVE MODE###############################################################
-iptables -t nat -A PREROUTING 	-p tcp -s 172.16.1.0/24 -d 172.16.1.254 -m multiport --dports 21,1024:65535 -j DNAT --to-destination 10.254.0.3
-iptables -A FORWARD  			-p tcp -s 172.16.1.0/24 -d 10.254.0.3 	-m multiport --dports 21,1024:65535 -j NFQUEUE --queue-num 0 
-iptables -A FORWARD  			-p tcp -d 172.16.1.0/24 -s 10.254.0.3 	-m multiport --sports 21,1024:65535 -j NFQUEUE --queue-num 0 
+####FTP ATIVO#################################################################################################################
+iptables -t nat -A PREROUTING 	-p tcp -s 172.16.1.0/24  -d 172.16.1.254 --dport 20:21 -j DNAT --to-destination 10.254.0.3
+iptables -A FORWARD  			-p tcp -s 172.16.1.0/24  -d 10.254.0.3 	--dport 20:21 -j NFQUEUE --queue-num 0 
+iptables -A FORWARD  			-p tcp -d 172.16.1.0/24  -s 10.254.0.3 	--sport 20:21 -j NFQUEUE --queue-num 0 
+####FTP PASSIVE MODE##########################################################################################################
+iptables -t nat -A PREROUTING 	-p tcp -s 172.16.1.0/24	 -d 172.16.1.254 -m multiport --dports 21,1024:65535 -j DNAT --to-destination 10.254.0.3
+iptables -A FORWARD  			-p tcp -s 172.16.1.0/24  -d 10.254.0.3 	-m multiport --dports 21,1024:65535 -j NFQUEUE --queue-num 0 
+iptables -A FORWARD  			-p tcp -d 172.16.1.0/24  -s 10.254.0.3 	-m multiport --sports 21,1024:65535 -j NFQUEUE --queue-num 0 
 
-####SSH PORT(22)###################################################################
+####SSH PORT(22)##############################################################################################################
 #SSH connections to the datastore server, Privada, but only if originated at the eden or dns2 servers.
 iptables -t nat -A PREROUTING 	-p tcp -s 172.16.1.2,172.16.1.3 	-d 172.16.1.254 --dport 22 -j DNAT --to-destination 10.254.0.2
 iptables -A FORWARD 			-p tcp -s 172.16.1.2,172.16.1.3 	-d 10.254.0.2 	--dport 22 -j NFQUEUE --queue-num 0  
@@ -54,38 +51,39 @@ iptables -A FORWARD 			-p tcp -d 172.16.1.2,172.16.1.3 	-s 10.254.0.2 	--sport 2
 					
 						
 
-###############################################################################################################################
+###############################################################################################################################################################################################################
 
 ####PRIVADA -> PUBLICA  (SNAT)		IP destination é a publica!
-####DNS PORT(53)##################################################################
+####DNS PORT(53)##############################################################################################################
 iptables -A FORWARD 			-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 53 -j NFQUEUE --queue-num 0  
 iptables -A FORWARD 			-p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 --sport 53 -j NFQUEUE --queue-num 0     						
 iptables -t nat -A POSTROUTING 	-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 53 -j SNAT --to-source 172.16.1.254
 
-####HTTP PORT(80)#################################################################
+####HTTP PORT(80)#############################################################################################################
 iptables -A FORWARD 			-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport http -j NFQUEUE --queue-num 0  
 iptables -A FORWARD 			-p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 --sport http -j NFQUEUE --queue-num 0     						
 iptables -t nat -A POSTROUTING 	-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport http -j SNAT --to-source 172.16.1.254
 
-####HTTPS PORT(443)###############################################################
+####HTTPS PORT(443)###########################################################################################################
 iptables -A FORWARD 			-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport https -j NFQUEUE --queue-num 0  
 iptables -A FORWARD 			-p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 --sport https -j NFQUEUE --queue-num 0     						
 iptables -t nat -A POSTROUTING 	-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport https -j SNAT --to-source 172.16.1.254
 
-####SSH PORT(22)##################################################################
+####SSH PORT(22)##############################################################################################################
 iptables -A FORWARD 			-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 22 -j NFQUEUE --queue-num 0  
 iptables -A FORWARD 			-p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 --sport 22 -j NFQUEUE --queue-num 0     						
-iptables -t nat -A POSTROUTING  -p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 22 -j SNAT --to-source 172.16.1.254
+iptables -t nat -A POSTROUTING 	-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 22 -j SNAT --to-source 172.16.1.254
 
 
-####FTP ATIVO######################################################################
+####FTP ATIVO#################################################################################################################
 iptables -A FORWARD  			-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 20:21 			-j NFQUEUE --queue-num 0 
 iptables -A FORWARD  			-p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 --sport 20:21 			-j NFQUEUE --queue-num 0 
-iptables -t nat -A POSTROUTING  -p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 20:21 			-j SNAT --to-source 172.16.1.254
-####FTP PASSIVE MODE###############################################################
+iptables -t nat -A POSTROUTING 	-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 --dport 20:21 			-j SNAT --to-source 172.16.1.254
+####FTP PASSIVE MODE##########################################################################################################
 #premitir que um pedido de FTP seja enviado e respondido
 iptables -A FORWARD 			-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 -m multiport --dports 21,1024:65535 -j NFQUEUE --queue-num 0 
 iptables -A FORWARD 			-p tcp -d 10.254.0.0/24 -s 172.16.1.0/24 -m multiport --sports 21,1024:65535 -j NFQUEUE --queue-num 0 
 iptables -t nat -A POSTROUTING 	-p tcp -s 10.254.0.0/24 -d 172.16.1.0/24 -m multiport --dports 21,1024:65535 -j SNAT --to-source 172.16.1.254
 
 #NOTA:para se conseguir alterar algo no server temos de ir a esse diretorio dar permissoes de escrita a anonimos(se fizermos login com um claro, USEI O /usr/games/)
+
