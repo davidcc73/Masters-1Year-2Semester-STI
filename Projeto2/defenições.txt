@@ -7,7 +7,6 @@ fuser -k 80/tcp
 nmap	linux	tool dedicada a fazer OS fingerprint			nmap
 hping3	linux   para gerar pacotes em massa:					hping3 
 
-hping3 -S -p 80 10.254.0.1 — flood								(SYN FLOOD)
 
 
 
@@ -28,7 +27,7 @@ router				10.254.0.245
 
 
 
-#DMZ					50.40.30.0/24
+#DMZ				50.40.30.0/24
 vpn-gw 				50.40.30.1
 dns 				50.40.30.2
 router				50.40.30.245
