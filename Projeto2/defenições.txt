@@ -11,14 +11,6 @@ hping3	linux   para gerar pacotes em massa:					hping3
 
 
 
-----------------------para testar os pings----------------------------------------
-iptables -A FORWARD -p icmp --icmp-type echo-request -s 10.254.0.0/24 -d 172.16.1.0/24 -j ACCEPT
-iptables -A FORWARD -p icmp --icmp-type echo-reply -s 172.16.1.0/24 -d 10.254.0.0/24 -j ACCEPT
-iptables -A FORWARD -p icmp --icmp-type echo-request -d 10.254.0.0/24 -s 172.16.1.0/24 -j ACCEPT
-iptables -A FORWARD -p icmp --icmp-type echo-reply -d 172.16.1.0/24 -s 10.254.0.0/24 -j ACCEPT
-----------------------para testar os pings----------------------------------------
-
-
 #Privada			10.254.0.0/24
 maquina generica	10.254.0.1
 datastore server	10.254.0.2
