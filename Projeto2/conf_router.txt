@@ -29,6 +29,51 @@ iptables -A INPUT 			-p tcp -s 172.16.1.0/24 -d 172.16.1.254 --sport 53 -j NFQUE
 iptables -A INPUT 			-p tcp -s 10.254.0.0/24 -d 10.254.0.254  --dport 22 -j NFQUEUE --queue-num 0
 iptables -A INPUT 			-p tcp -s 50.40.30.1 	-d 50.40.30.254  --dport 22 -j NFQUEUE --queue-num 0  	#só para o vpn-gw da DMZ
 
+###############################################################################################################################################################################################################
+####SEM NAT
+####Máquina2(DMZ, dns) <-> qualquer endereço
+iptables -A FORWARD -d 50.40.30.2 -p tcp --dport domain -j NFQUEUE --queue-num 0
+iptables -A FORWARD -s 50.40.30.2 -p tcp --sport domain -j NFQUEUE --queue-num 0
+
+####Máquina2(DMZ, dns) <-> Máquina1(Rede Pública)
+iptables -A FORWARD -s 50.40.30.2 -d 172.16.1.0/24 -p tcp --dport domain -j NFQUEUE --queue-num 0
+iptables -A FORWARD -d 50.40.30.2 -s 172.16.1.0/24 -p tcp --sport domain -j NFQUEUE --queue-num 0
+
+####Máquina2(DMZ, dns) <-> Máquina1(Rede Pública, dns2)
+iptables -A FORWARD -s 50.40.30.2 -d 172.16.1.3 -p tcp --dport domain -j NFQUEUE --queue-num 0
+iptables -A FORWARD -d 50.40.30.2 -s 172.16.1.3 -p tcp --sport domain -j NFQUEUE --queue-num 0
+
+####Máquina2(DMZ, smtp) <-> qualquer endereço
+iptables -A FORWARD -d 50.40.30.3 -p tcp --dport smtp -j NFQUEUE --queue-num 0
+iptables -A FORWARD -s 50.40.30.3 -p tcp --sport smtp -j NFQUEUE --queue-num 0
+
+####Máquina2(DMZ, mail) <-> qualquer endereço
+iptables -A FORWARD -d 50.40.30.4 -p tcp --dport pop3 -j NFQUEUE --queue-num 0
+iptables -A FORWARD -s 50.40.30.4 -p tcp --sport pop3 -j NFQUEUE --queue-num 0
+iptables -A FORWARD -d 50.40.30.4 -p tcp --dport imap -j NFQUEUE --queue-num 0
+iptables -A FORWARD -s 50.40.30.4 -p tcp --sport imap -j NFQUEUE --queue-num 0
+
+####Máquina2(DMZ, www) <-> qualquer endereço
+iptables -A FORWARD -d 50.40.30.5 -p tcp --dport http -j NFQUEUE --queue-num 0
+iptables -A FORWARD -s 50.40.30.5 -p tcp --sport http -j NFQUEUE --queue-num 0
+iptables -A FORWARD -d 50.40.30.5 -p tcp --dport https -j NFQUEUE --queue-num 0
+iptables -A FORWARD -s 50.40.30.5 -p tcp --sport https -j NFQUEUE --queue-num 0
+
+####Máquina2(DMZ, vpn-gw) <-> qualquer endereço
+iptables -A FORWARD -d 50.40.30.1 -p tcp --dport openvpn -j NFQUEUE --queue-num 0
+iptables -A FORWARD -s 50.40.30.1 -p tcp --sport openvpn -j NFQUEUE --queue-num 0
+
+####Máquina1(DMZ, vpn-gw) <-> Máquina2(Internal network, datastore)
+####Máquina1(DMZ, vpn-gw) <-> Máquina2(Internal network, ftp)
+iptables -A FORWARD -s 50.40.30.1 -d 10.254.0.2 -p tcp --dport domain -j NFQUEUE --queue-num 0 
+iptables -A FORWARD -d 50.40.30.1 -s 10.254.0.2 -p tcp --sport domain -j NFQUEUE --queue-num 0
+iptables -A FORWARD -s 50.40.30.1 -d 10.254.0.3 -p tcp --dport domain -j NFQUEUE --queue-num 0
+iptables -A FORWARD -d 50.40.30.1 -s 10.254.0.3 -p tcp --sport domain -j NFQUEUE --queue-num 0
+
+
+
+
+
 
 ###############################################################################################################################################################################################################
 
