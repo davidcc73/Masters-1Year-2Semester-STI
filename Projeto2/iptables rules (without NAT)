@@ -140,7 +140,7 @@ route add -net 172.16.1.0/24 gw 50.40.30.254
 nc -l 1194 (vpn)
 
 
-8?) VPN clients connected to the gateway (vpn-gw) should be able to connect to all services in the Internal network
+8) VPN clients connected to the gateway (vpn-gw) should be able to connect to all services in the Internal network
 
 Regras router:
 iptables -A FORWARD -s 50.40.30.1 -d 10.254.0.2 -p tcp --dport domain -j ACCEPT 
@@ -156,7 +156,7 @@ nc 10.254.0.3 53 (ftp)
 
 Máquina2(Rede privada):
 ip addr add 10.254.0.2/24 dev enp0s8 (datastore)
-ip addr add 10.254.0.2/24 dev enp0s8 (ftp)
+ip addr add 10.254.0.3/24 dev enp0s8 (ftp)
 route add -net 50.40.30.0/24 gw 10.254.0.254
 nc -l 53 (datastore)
 nc -l 53 (ftp)
