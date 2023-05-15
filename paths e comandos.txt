@@ -45,13 +45,15 @@ ver os logs do modulo de segurança a se formarem em tempo real no dir /var/log/
 tail -f modsec_audit.log
 
 
+sudo systemctl stop firewalld  
+
+
+Testar se o modsecurity esta a trabalhar:
+	curl -I http://localhost:3000/#/
+	http://127.0.0.1/?exec=/bin/bash
 
 
 /etc/httpd/conf.d/					servidor apache
 /etc/httpd/modsecurity.d/			regras do modulo de segurança
 /var/log/httpd/						logs do modulo de segurança
 /etc/httpd/conf.d/mod_security		ativar o readonly do modulo, trocar	SecRuleEngine On -> SecRuleEngine DetectionOnly
-
-
-
-curl -d “id=1 AND 1=1” http://127.0.0.1/index.php

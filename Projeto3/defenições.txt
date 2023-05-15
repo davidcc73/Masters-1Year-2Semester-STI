@@ -1,0 +1,16 @@
+Testar se o modsecurity esta a trabalhar:
+	curl -I http://localhost:3000/#/
+	http://127.0.0.1/?exec=/bin/bash
+
+
+Juicy-Shop Site: http://localhost:3000/#/
+
+sudo systemctl start docker
+sudo systemctl enable docker
+docker run --rm -p 3000:3000 bkimminich/juice-shop
+
+
+cd /home/dcaetano/ZAP_2.12.0
+./zap.sh
+
+curl -d “id=1 AND 1=1” http://127.0.0.1/index.php
