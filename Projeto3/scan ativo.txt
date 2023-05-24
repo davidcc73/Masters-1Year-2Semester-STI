@@ -1,0 +1,46 @@
+											Força	Elapsed			Reqs	Alertas		Status
+Analisador											00:35.152		198		
+Plugin						
+Path Traversal								Alto	100	02:59.785	675		0			Completado
+Remote File Inclusion						Alto	100	01:12.391	500		0			Completado
+Source Code Disclosure - /WEB-INF folder	Alto	100	00:02.032	19		0			Completado
+Heartbleed OpenSSL Vulnerability			Alto	100	00:00.186	3		0			Completado
+Source Code Disclosure - CVE-2012-1823		Alto	100	01:02.596	423		0			Completado
+Remote Code Execution - CVE-2012-1823		Alto	100	04:32.907	914		0			Completado
+External Redirect							Alto	100	00:47.478	300		0			Completado
+Server Side Include							Alto	100	00:42.032	100		0			Completado
+Cross Site Scripting (Reflected)			Alto	100	00:51.121	125		0			Completado
+Cross Site Scripting (Persistent) - Prime	Alto	100	00:48.609	25		0			Completado
+Cross Site Scripting (Persistent) - Spider	Alto	100	01:09.720	459		0			Completado
+Cross Site Scripting (Persistent)			Alto	100	00:42.140	0		0			Completado
+SQL Injection								Alto	100	01:13.390	1142	1			Completado
+SQL Injection - MySQL						Alto	100	00:50.879	325		0			Completado
+SQL Injection - Hypersonic SQL				Alto	100	00:47.805	275		0			Completado
+SQL Injection - Oracle						Alto	100	00:46.435	275		0			Completado
+SQL Injection - PostgreSQL					Alto	100	00:49.969	275		0			Completado
+SQL Injection - SQLite						Alto	100	00:57.571	524		9			Completado
+Cross Site Scripting (DOM Based)			Alto	100	192:49.130	0		0			Completado
+SQL Injection - MsSQL						Alto	100	00:53.254	124		0			Completado
+Server Side Code Injection					Alto	100	00:48.196	200		0			Completado
+Remote OS Command Injection					Alto	100	02:18.418	1358	0			Completado
+XML External Entity Attack					Alto	100	00:17.587	0		0			Completado
+Generic Padding Oracle						Alto	100	00:42.381	0		0			Completado
+Cloud Metadata Potentially Exposed			Alto	100	00:00.021	1		1			Completado
+Directory Browsing							Alto	100	01:17.208	459		0			Completado
+Buffer Overflow								Alto	100	00:55.621	25		0			Completado
+Format String Error							Alto	100	00:55.651	75		0			Completado
+CRLF Injection								Alto	100	00:59.776	175		0			Completado
+Parameter Tampering							Alto	100	00:47.429	61		0			Completado
+ELMAH Information Leak						Alto	100	00:00.121	1		1			Completado
+Trace.axd Information Leak					Alto	100	00:23.803	105		5			Completado
+.htaccess Information Leak					Alto	100	00:21.970	105		5			Completado
+.env Information Leak						Alto	100	00:22.777	105		5			Completado
+Hidden File Finder							Alto	100	00:03.216	49		0			Completado
+XSLT Injection								Alto	100	01:00.213	168		0			Completado
+GET for POST								Alto	100	00:10.349	0		0			Completado
+User Agent Fuzzer							Alto	100	15:17.297	5507	205			Completado
+Regras de Scan ativas						Alto	100	00:00.046	0		0			Skipped, no scripts enabled.
+SOAP Action Spoofing						Alto	100	00:19.389	0		0			Completado
+SOAP XML Injection							Alto	100	00:54.198	0		0			Completado
+						
+Totais												242:30.897		18259	232	
