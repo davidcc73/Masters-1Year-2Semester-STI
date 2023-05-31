@@ -56,4 +56,4 @@ Testar se o modsecurity esta a trabalhar:
 /etc/httpd/conf.d/					servidor apache
 /etc/httpd/modsecurity.d/			regras do modulo de segurança
 /var/log/httpd/						logs do modulo de segurança
-/etc/httpd/conf.d/mod_security		ativar o readonly do modulo, trocar	SecRuleEngine On -> SecRuleEngine DetectionOnly
+/etc/httpd/conf.d/mod_security		ativar o read-only do modulo, trocar	SecRuleEngine On -> SecRuleEngine DetectionOnly
